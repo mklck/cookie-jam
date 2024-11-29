@@ -1,13 +1,12 @@
+from .mapPainter	import MapPainter
+from .model		import Point
+from .Entity	import Entity
+
 def main():
-	print("Hello World!")
-	## moje zmiany:
-	from map_old import Map
-	from Entity import Entity
-	n=70
-	m=70
-	testmap=Map(n,m)
-	for i in range (n):
-		for j in range (m):
-			if(i%2==0 and j%2==0):
-				testmap.set_tile_colour(i,j,"#b123b7");
-	Roman = Entity(15, 15,)
+	size = Point(70, 70)
+	m = MapPainter(size)
+	for p in size.iterate():
+		if(p.x%2==0 and p.y%2==0):
+			m.setTileColour(p, "#b123b7");
+	m.draw()
+	#Roman = Entity(15, 15)
