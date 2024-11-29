@@ -1,12 +1,5 @@
-from .tile	import Tile
-from .model	import Point
+from .model	import *
 from itertools	import product
-
-from PyQt6.QtWidgets import QApplication, QMainWindow, QGraphicsScene, QGraphicsView, QGraphicsRectItem
-from PyQt6.QtGui import QColor
-from PyQt6.QtCore import QRectF
-import sys
-
 
 class Map:
 	def __init__(self, size : Point, default_colour="white"):
@@ -31,36 +24,3 @@ class Map:
 		for x, y in product(range(self.size.x), range(self.size.y)):
 			yield Point(x, y)
 
-class MapPainter:
-	TILE_SIZE = 20
-	def __init__(self):
-		self.map = Map(size=Point(60, 60))
-		self.app = QApplication(sys.argv)
-
-		self.window = QMainWindow()
-		self.window.setWindowTitle("Map Drawer")
-
-		self.scene = QGraphicsScene()
-
-	def draw(self):
-		for p in self.map.everyTilePoint():
-			self.drawRect(p)
-		view = QGraphicsView(self.scene)
-		self.window.setCentralWidget(view)
-		self.window.resize(
-			self.map.size.x * self.TILE_SIZE + 20,
-			self.map.size.y * self.TILE_SIZE + 40
-		)
-
-		self.window.show()
-		sys.exit(self.app.exec())
-
-	def drawRect(self, p : Point):
-		colour = self.map.getTile(p).colour
-		rect = QGraphicsRectItem(
-			p.x * self.TILE_SIZE, p.y * self.TILE_SIZE,
-			self.TILE_SIZE, self.TILE_SIZE
-		)
-		rect.setBrush(QColor(colour))
-		rect.setPen(QColor("black"))  # Opcjonalnie dodajemy obramowanie
-		self.scene.addItem(rect)
