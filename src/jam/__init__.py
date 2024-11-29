@@ -1,2 +1,1 @@
-from .client import client
-from .server import server
+from .main import main

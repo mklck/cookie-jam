@@ -3,14 +3,13 @@ requires = ["setuptools"]
 build-backend = "setuptools.build_meta"
 
 [project]
-requires-python = ">= 3.12"
+requires-python = ">=3.12"
 version = "0.1.0"
 name = "jam"
-dependencies = ["Flask", "pyqt6"]
+dependencies = ["pyqt6"]
 
 [project.scripts]
-jam = "jam:client"
-jamd = "jam:server"
+jam = "jam:main"
 
 [project.optional-dependencies]
 dev = ["pytest", "mypy"]
