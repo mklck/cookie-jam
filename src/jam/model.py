@@ -8,3 +8,7 @@ class Point:
 	def iterate(self):
 		for x, y in product(range(self.x), range(self.y)):
 			yield Point(x, y)
+
+@dataclass
+class Tile:
+	colour : str = "white"

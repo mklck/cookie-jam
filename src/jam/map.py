@@ -1,5 +1,4 @@
-from .tile	import Tile
-from .model	import Point
+from .model	import *
 from itertools	import product
 
 class Map:
