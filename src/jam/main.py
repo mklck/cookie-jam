@@ -1,2 +1,5 @@
+from .map import MapPainter
+
 def main():
-	print("Hello World!")
+	m = MapPainter()
+	m.draw()
