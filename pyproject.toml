@@ -1,0 +1,20 @@
+[build-system]
+requires = ["setuptools"]
+build-backend = "setuptools.build_meta"
+
+[project]
+requires-python = ">= 3.12"
+version = "0.1.0"
+name = "jam"
+dependencies = ["Flask", "pyqt6"]
+
+[project.scripts]
+jam = "jam:client"
+jamd = "jam:server"
+
+[project.optional-dependencies]
+dev = ["pytest", "mypy"]
+
+[tool.mypy]
+files = "src"
+check_untyped_defs = true
