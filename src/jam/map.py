@@ -5,10 +5,13 @@ class Map:
 	def __init__(self, size : Point, default_colour="white"):
 		self.size = size
 		self.grid =[[Tile() for _ in range(size.x)] for _ in range(size.y)]
-
+		self.entities = []
 	def setTileColour(self, p : Point, colour):
 		t = self.getTile(p)
 		t.colour = colour
+
+	def addEntity(self, entity):
+		self.entities.append(entity)
 
 	def validPoint(self, p : Point):
 		cond0 = 0 <= p.x < self.size.x

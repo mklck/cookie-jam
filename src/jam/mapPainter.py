@@ -7,7 +7,7 @@ from PyQt6.QtCore import QRectF
 import sys
 
 class MapPainter(Map):
-	TILE_SIZE = 20
+	TILE_SIZE = 80
 	def __init__(self, size : Point):
 		super().__init__(size)
 		self.app = QApplication(sys.argv)
@@ -26,6 +26,9 @@ class MapPainter(Map):
 			self.size.x * self.TILE_SIZE + 20,
 			self.size.y * self.TILE_SIZE + 40
 		)
+
+		for entity in self.entities:
+			entity.initialize_graphics(self.scene, self.TILE_SIZE)
 
 		self.window.show()
 		sys.exit(self.app.exec())
