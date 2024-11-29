@@ -1,5 +1,5 @@
-from .map	import MapPainter
-from .model	import Point
+from .mapPainter	import MapPainter
+from .model		import Point
 from .Entity	import Entity
 
 def main():
