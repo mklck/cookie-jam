@@ -2,12 +2,15 @@ class Entity:
     def __init__(self, x_start, y_start, image_path):
         self.x = x_start
         self.y = y_start
-        self.image_path = image_path # Ścieżka do obrazka reprezentującego obiekt
+        self.image_path = image_path  # Ścieżka do obrazka reprezentującego obiekt
         self.graphics_item = None
 
     def initialize_graphics(self, scene, tile_size):
         """Dodaje graficzną reprezentację obiektu do sceny."""
-        pixmap = QPixmap(self.image_path).scaled(tile_size, tile_size)  # Skalujemy obrazek do rozmiaru płytki
+        pixmap = QPixmap(self.image_path)
+        if pixmap.isNull():
+            raise FileNotFoundError(f"Image file '{self.image_path}' not found or invalid.")
+        pixmap = pixmap.scaled(tile_size, tile_size)  # Skalujemy obrazek do rozmiaru płytki
         self.graphics_item = QGraphicsPixmapItem(pixmap)
         self.graphics_item.setPos(self.y * tile_size, self.x * tile_size)  # Ustawiamy początkową pozycję
         scene.addItem(self.graphics_item)
@@ -32,7 +35,7 @@ class Entity:
             if steps > 0:
                 self.x += dx
                 self.y += dy
-                self.graphics_item.setPos(self.y, self.x)
+                self.graphics_item.setPos(self.y * 40, self.x * 40)
                 steps -= 1
             else:
                 timer.stop()
