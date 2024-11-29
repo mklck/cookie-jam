@@ -31,10 +31,10 @@ class Map:
 		for x, y in product(range(self.size.x), range(self.size.y)):
 			yield Point(x, y)
 
-class MapPainter:
+class MapPainter(Map):
 	TILE_SIZE = 20
-	def __init__(self):
-		self.map = Map(size=Point(60, 60))
+	def __init__(self, size : Point):
+		super().__init__(size)
 		self.app = QApplication(sys.argv)
 
 		self.window = QMainWindow()
@@ -43,20 +43,20 @@ class MapPainter:
 		self.scene = QGraphicsScene()
 
 	def draw(self):
-		for p in self.map.everyTilePoint():
+		for p in self.everyTilePoint():
 			self.drawRect(p)
 		view = QGraphicsView(self.scene)
 		self.window.setCentralWidget(view)
 		self.window.resize(
-			self.map.size.x * self.TILE_SIZE + 20,
-			self.map.size.y * self.TILE_SIZE + 40
+			self.size.x * self.TILE_SIZE + 20,
+			self.size.y * self.TILE_SIZE + 40
 		)
 
 		self.window.show()
 		sys.exit(self.app.exec())
 
 	def drawRect(self, p : Point):
-		colour = self.map.getTile(p).colour
+		colour = self.getTile(p).colour
 		rect = QGraphicsRectItem(
 			p.x * self.TILE_SIZE, p.y * self.TILE_SIZE,
 			self.TILE_SIZE, self.TILE_SIZE
