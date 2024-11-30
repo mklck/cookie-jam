@@ -1,5 +1,6 @@
 from .map	import Map
-from .model	import Point
+from .model	import *
+from .entity	import Entity
 
 from PyQt6.QtWidgets import QApplication, QMainWindow, QGraphicsScene, QGraphicsView, QGraphicsRectItem
 from PyQt6.QtGui import QColor
@@ -27,8 +28,8 @@ class MapPainter(Map):
 			self.size.y * self.TILE_SIZE + 40
 		)
 
-		for entity in self.entities:
-			entity.initialize_graphics(self.scene, self.TILE_SIZE)
+		for e in self.entities:
+			self.drawEntity(e)
 
 		self.window.show()
 		sys.exit(self.app.exec())
@@ -42,3 +43,13 @@ class MapPainter(Map):
 		rect.setBrush(QColor(colour))
 		rect.setPen(QColor("black"))  # Opcjonalnie dodajemy obramowanie
 		self.scene.addItem(rect)
+
+	def drawEntity(self, e : Entity):
+		self.scene.addItem(e.getGItem(tileSize=self.TILE_SIZE))
+
+	def getScene(self):
+		return self.scene
+	def getTileSize(self):
+		return self.TILE_SIZE
+	def tileIterate(self):
+		return self.size.iterate()
