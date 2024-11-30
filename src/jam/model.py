@@ -1,5 +1,9 @@
 from dataclasses	import dataclass
 from itertools		import product
+from typing		import Literal, Union
+
+Direction = Literal['north', 'south', 'east', 'west']
+HeroState = Literal['normal', 'walk', 'fight']
 
 @dataclass
 class Point:
@@ -28,3 +32,24 @@ class Pointf:
 			self.x * other.x,
 			self.y * other.y
 		)
+
+
+@dataclass
+class Texture:
+	path		: str
+	direction	: Direction
+	state		: HeroState
+	stage		: Union[int, None] = None
+
+class TextureManager:
+	def __init__(self):
+		self.textures = []
+
+	def find(self, direction : Direction, state : HeroState):
+		for t in self.textures:
+			if t.direction != direction or t.state != state:
+				continue
+			yield t
+
+	def addTexture(self, t : Texture):
+		self.textures.append(t)

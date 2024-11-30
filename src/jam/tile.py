@@ -4,6 +4,22 @@ from dataclasses	import dataclass
 from PyQt6.QtWidgets	import QGraphicsItem, QGraphicsPixmapItem, QGraphicsRectItem
 from PyQt6.QtGui	import QPixmap, QColor
 
+class PixmapDB:
+	def __init__(self):
+		self.db = dict()
+	def get(self, path : str) -> QPixmap:
+		if path in self.db:
+			return self.db[path]
+		return self.add(path)
+	def add(self, path):
+		px = QPixmap(path)
+		if px.isNull():
+			raise FileNotFoundError(path)
+		self.db[path] = px
+		return px
+
+pixmapDB = PixmapDB()
+
 @dataclass(kw_only=True, init=False)
 class Tile:
 	pos		: Point
@@ -60,12 +76,12 @@ class Tile:
 class TilePixmap(Tile):
 	pixmap	: QPixmap
 
-	def __init__(self, path : str):
+	def __init__(self):
 		super().__init__()
-		px = QPixmap(path)
-		if px.isNull():
-			raise FileNotFoundError()
-		self.pixmap = px
+
+	def setPixmap(self, path):
+		self.pixmap = pixmapDB.get(path)
+		self.markUpdated()
 
 	def update(self):
 		px = self.pixmap.scaled(self.getTileSize(), self.getTileSize())
