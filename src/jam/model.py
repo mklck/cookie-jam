@@ -56,3 +56,13 @@ class TextureManager:
 
 	def addTexture(self, t : Texture):
 		self.textures.append(t)
+
+@dataclass
+class Deadplace:
+	start	: Point
+	end	: Point
+
+	def __contains__(self, p : Point):
+		cond0 = self.start.x <= p.x <= self.end.x
+		cond1 = self.start.y <= p.y <= self.end.y
+		return cond0 and cond1
