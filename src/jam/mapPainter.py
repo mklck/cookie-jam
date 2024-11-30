@@ -3,6 +3,7 @@ from .model		import *
 from .entity		import Entity
 from .tile		import *
 from .gui		import *
+from .animator		import Animator
 from dataclasses	import dataclass, field
 
 class MapPainter(Map):
@@ -12,6 +13,7 @@ class MapPainter(Map):
 			Tile.size * size.x,
 			Tile.size * size.y
 		)
+		self.animator = Animator()
 		self.window = Window(winSize)
 		self.scene = self.window.getScene()
 		super().__init__(size)
@@ -23,6 +25,7 @@ class MapPainter(Map):
 	def update(self, obj = None):
 		if type(obj) is QKeyEvent:
 			self.handleKeyboard(obj.text())
+		self.animator.step()
 		self.scene.updateAll()
 
 	def initScene(self):
@@ -34,14 +37,15 @@ class MapPainter(Map):
 
 	def handleKeyboard(self, key : str):
 		movements = {
-			'w': Point(0, -1),
-			's': Point(0,  1),
-			'd': Point(1,  0),
-			'a': Point(-1, 0),
+			'w': 'north',
+			's': 'south',
+			'a': 'west',
+			'd': 'east',
 		}
 		if key not in movements:
 			return
-		self.mainHero.moveByOffset(movements[key])
+		direction = movements[key]
+		self.animator.animate(self.mainHero, direction)
 
 	def addTile(self, t : Tile):
 		self.scene.addItem(t)

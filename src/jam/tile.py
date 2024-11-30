@@ -1,4 +1,4 @@
-from .model		import Point
+from .model		import *
 from dataclasses	import dataclass
 
 from PyQt6.QtWidgets	import QGraphicsItem, QGraphicsPixmapItem, QGraphicsRectItem
@@ -6,13 +6,19 @@ from PyQt6.QtGui	import QPixmap, QColor
 
 @dataclass(kw_only=True, init=False)
 class Tile:
-	pos	: Point
-	gitem	: QGraphicsItem
-	updated : bool
+	pos		: Point
+	spriteOffset	: Pointf
+	gitem		: QGraphicsItem
+	updated 	: bool
 	size = None
 
 	def __init__(self, pos=Point(0, 0)):
 		self.pos = pos
+		self.spriteOffset = Pointf(0, 0)
+		self.markUpdated()
+
+	def setSpriteOffset(self, offset : Pointf = Pointf(0, 0)):
+		self.spriteOffset = offset
 		self.markUpdated()
 
 	def needUpdate(self):
@@ -27,10 +33,10 @@ class Tile:
 		return self.gitem
 		
 	def updatePos(self):
-		self.gitem.setPos(
-			self.pos.x * self.getTileSize(),
-			self.pos.y * self.getTileSize()
-		)
+		tsize = self.getTileSize()
+		x = self.pos.x * tsize + self.spriteOffset.x * tsize
+		y = self.pos.y * tsize + self.spriteOffset.y * tsize
+		self.gitem.setPos(x, y)
 		
 	def setPos(self, pos : Point):
 		self.updated = True
