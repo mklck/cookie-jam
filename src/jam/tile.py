@@ -78,13 +78,21 @@ class TilePixmap(Tile):
 
 	def __init__(self):
 		super().__init__()
+		self.desiredSize = None
 
 	def setPixmap(self, path):
 		self.pixmap = pixmapDB.get(path)
 		self.markUpdated()
 
+	def setDesiredSize(self, size : Point = None):
+		self.desiredSize = size
+		self.markUpdated()
+
 	def update(self):
-		px = self.pixmap.scaled(self.getTileSize(), self.getTileSize())
+		if self.desiredSize:
+			px = self.pixmap.scaled(self.desiredSize.x, self.desiredSize.y)
+		else:
+			px = self.pixmap
 		self.gitem = QGraphicsPixmapItem(px)
 		return super().update()
 

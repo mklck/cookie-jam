@@ -1,8 +1,8 @@
 from .tile import *
 
-from PyQt6.QtWidgets import QApplication, QMainWindow, QGraphicsScene, QGraphicsView, QWidget
+from PyQt6.QtWidgets import QApplication, QMainWindow, QGraphicsScene, QGraphicsView, QWidget, QVBoxLayout
 from PyQt6.QtGui import QColor, QKeyEvent
-from PyQt6.QtCore import QTimer
+from PyQt6.QtCore import QTimer, QRect
 import sys
 
 class Scene(QGraphicsScene):
@@ -48,6 +48,7 @@ class Window(QWidget):
 
 	def keyPressEvent(self, ev):
 		self.callback(ev)
+
 	def getScene(self):
 		return self.scene
 

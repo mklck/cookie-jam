@@ -29,10 +29,7 @@ class MapPainter(Map):
 		self.scene.updateAll()
 
 	def initScene(self):
-		for tr in self.grid:
-			if ((tr.pos.x % 2) == (tr.pos.y % 2)):
-				tr.setColor("#b123b7")
-			self.addTile(tr)
+		self.addTile(self.background)
 		self.addTile(self.mainHero)
 
 	def handleKeyboard(self, key : str):
@@ -49,6 +46,3 @@ class MapPainter(Map):
 
 	def addTile(self, t : Tile):
 		self.scene.addItem(t)
-
-	def tileIterate(self):
-		return self.size.iterate()
