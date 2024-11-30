@@ -19,6 +19,8 @@ class MovementAnimation:
 	def animate(self, dir : str):
 		self.dir = dir
 		self.time = 0
+		self.target.setDirection(dir)
+		self.target.setState('walk')
 	def getOffset(self):
 		t = self.time / self.duration
 		return Pointf(t, t) * Movements[self.dir]
@@ -28,14 +30,16 @@ class MovementAnimation:
 			self.target.moveByOffset(Movements[self.dir])
 			self.target.setSpriteOffset()
 			self.dir = None
+			self.target.setState('normal')
 			return True
+		self.target.updateTexture(self.time / self.duration)
 		self.target.setSpriteOffset(self.getOffset())
 		return False
 	def isAnimating(self, t : TilePixmap):
 		return self.target == t
 
 class Animator:
-	moveDuration = 8 # In ticks
+	moveDuration = 11 # In ticks
 	def __init__(self):
 		self.animations = []
 	def isYetAnimated(self, obj):
