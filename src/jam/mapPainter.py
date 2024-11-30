@@ -1,55 +1,50 @@
-from .map	import Map
-from .model	import *
-from .entity	import Entity
-
-from PyQt6.QtWidgets import QApplication, QMainWindow, QGraphicsScene, QGraphicsView, QGraphicsRectItem
-from PyQt6.QtGui import QColor
-from PyQt6.QtCore import QRectF
-import sys
+from .map		import Map
+from .model		import *
+from .entity		import Entity
+from .tile		import *
+from .gui		import *
+from dataclasses	import dataclass, field
 
 class MapPainter(Map):
-	TILE_SIZE = 80
 	def __init__(self, size : Point):
+		Tile.setTileSize(80)
+		winSize = Point(
+			Tile.size * size.x,
+			Tile.size * size.y
+		)
+		self.window = Window(winSize)
+		self.scene = self.window.getScene()
 		super().__init__(size)
-		self.app = QApplication(sys.argv)
 
-		self.window = QMainWindow()
-		self.window.setWindowTitle("Map Drawer")
+	def show(self):
+		self.initScene()
+		self.window.show(self.update)
 
-		self.scene = QGraphicsScene()
+	def update(self, obj = None):
+		if type(obj) is QKeyEvent:
+			self.handleKeyboard(obj.text())
+		self.scene.updateAll()
 
-	def draw(self):
-		for p in self.everyTilePoint():
-			self.drawRect(p)
-		view = QGraphicsView(self.scene)
-		self.window.setCentralWidget(view)
-		self.window.resize(
-			self.size.x * self.TILE_SIZE + 20,
-			self.size.y * self.TILE_SIZE + 40
-		)
+	def initScene(self):
+		for tr in self.grid:
+			if ((tr.pos.x % 2) == (tr.pos.y % 2)):
+				tr.setColor("#b123b7")
+			self.addTile(tr)
+		self.addTile(self.mainHero)
 
-		for e in self.entities:
-			self.drawEntity(e)
+	def handleKeyboard(self, key : str):
+		movements = {
+			'w': Point(0, -1),
+			's': Point(0,  1),
+			'd': Point(1,  0),
+			'a': Point(-1, 0),
+		}
+		if key not in movements:
+			return
+		self.mainHero.moveByOffset(movements[key])
 
-		self.window.show()
-		sys.exit(self.app.exec())
+	def addTile(self, t : Tile):
+		self.scene.addItem(t)
 
-	def drawRect(self, p : Point):
-		colour = self.getTile(p).colour
-		rect = QGraphicsRectItem(
-			p.x * self.TILE_SIZE, p.y * self.TILE_SIZE,
-			self.TILE_SIZE, self.TILE_SIZE
-		)
-		rect.setBrush(QColor(colour))
-		rect.setPen(QColor("black"))  # Opcjonalnie dodajemy obramowanie
-		self.scene.addItem(rect)
-
-	def drawEntity(self, e : Entity):
-		self.scene.addItem(e.getGItem(tileSize=self.TILE_SIZE))
-
-	def getScene(self):
-		return self.scene
-	def getTileSize(self):
-		return self.TILE_SIZE
 	def tileIterate(self):
 		return self.size.iterate()
