@@ -2,10 +2,12 @@ from .map	import Map
 from .animator	import Animator, Movements
 
 class Controller:
-	def __init__(self, m : Map):
-		self.map = m
+	def __init__(self):
 		self.animator = Animator()
-		
+
+	def setMap(self, m):
+		self.map = m
+
 	def keyEvent(self, key):
 		movements = {
 			'w': 'north',
@@ -21,6 +23,7 @@ class Controller:
 		self.animator.animate(self.map.mainHero, direction)
 	def canMove(self, direction):
 		newPos = Movements[direction] + self.map.mainHero.pos
-		return self.map.isPointInMap(newPos)
+		return not self.map.isPointDead(newPos)
 	def step(self):
+		print(f'pos = {self.map.mainHero.pos}', end='\r')
 		self.animator.step()

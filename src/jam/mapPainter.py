@@ -1,37 +1,38 @@
 from .map		import Map
-from .model		import *
-from .entity		import Entity
-from .tile		import *
-from .gui		import *
-from .animator		import Animator
+from .model		import Point
+from .tile		import Tile
+from .gui		import Window, KbdEvent
 from .controller	import Controller
-from dataclasses	import dataclass, field
+from .scene		import Scene
 
-class MapPainter(Map):
-	def __init__(self, size : Point):
-		Tile.setTileSize(80)
+class MapPainter:
+	def __init__(self, size : Point, tileSize : int):
+		Tile.setTileSize(tileSize)
 		winSize = Point(
-			Tile.size * size.x,
-			Tile.size * size.y
+			tileSize * size.x,
+			tileSize * size.y
 		)
-		self.controller = Controller(self)
-		self.window = Window(winSize)
-		self.scene = self.window.getScene()
-		super().__init__(size)
+		self.controller = Controller()
+		self.win = Window(winSize)
+		self.view = self.win.view
+
+	def setMap(self, m : Map):
+		self.map = m
+		self.controller.setMap(m)
 
 	def show(self):
 		self.initScene()
-		self.window.show(self.update)
+		self.win.show(self.update)
 
 	def update(self, obj = None):
-		if type(obj) is QKeyEvent:
-			self.controller.keyEvent(obj.text())
+		if type(obj) is KbdEvent:
+			self.controller.keyEvent(obj)
 		self.controller.step()
-		self.scene.updateAll()
+		self.view.updateScene()
 
 	def initScene(self):
-		self.addTile(self.background)
-		self.addTile(self.mainHero)
+		self.addTile(self.map.background)
+		self.addTile(self.map.mainHero)
 
 	def addTile(self, t : Tile):
-		self.scene.addItem(t)
+		self.view.scene().addItem(t)

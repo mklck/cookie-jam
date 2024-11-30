@@ -1,30 +1,13 @@
-from .tile import *
+from .scene	import Scene
+from .model	import Point
 
 from PyQt6.QtWidgets import QApplication, QMainWindow, QGraphicsScene, QGraphicsView, QWidget, QVBoxLayout
 from PyQt6.QtGui import QColor, QKeyEvent
 from PyQt6.QtCore import QTimer, QRect
 import sys
 
-class Scene(QGraphicsScene):
-	def __init__(self):
-		super().__init__()
-		self.tiles = list()
-
-	def addItem(self, t : Tile):
-		self.tiles.append(t)
-		qg = t.update()
-		super().addItem(qg)
-
-	def updateAll(self):
-		for t in self.tiles:
-			if not t.needUpdate():
-				continue
-			self.updateTile(t)
-
-	def updateTile(self, t : Tile):
-		self.removeItem(t.getGitem())
-		self.addItem(t)
-
+class KbdEvent(str):
+	pass
 
 class View(QGraphicsView):
 	def __init__(self):
@@ -39,6 +22,8 @@ class View(QGraphicsView):
 		self.map[name] = scene
 	def remove(self, name : str):
 		del self.meta[name]
+	def updateScene(self):
+		self.scene().updateAll()
 
 
 class Window(QWidget):
@@ -67,6 +52,8 @@ class Window(QWidget):
 		self.callback()
 
 	def keyPressEvent(self, ev):
+		if type(ev) is QKeyEvent:
+			ev = KbdEvent(ev.text())
 		self.callback(ev)
 
 	def getScene(self):

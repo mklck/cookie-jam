@@ -29,6 +29,7 @@ class Tile:
 	size = None
 
 	def __init__(self, pos=Point(0, 0)):
+		self.gitem = None
 		self.pos = pos
 		self.spriteOffset = Pointf(0, 0)
 		self.markUpdated()

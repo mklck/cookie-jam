@@ -1,8 +1,14 @@
-from .model	import Point
-from .tile	import TilePixmap
-from .entity	import Entity
+from .model		import Point, Deadplace
+from .tile		import TilePixmap
+from .entity		import Entity
+from dataclasses	import dataclass
+from typing		import List
 
+@dataclass(init=False)
 class Map:
+	background	: TilePixmap
+	mainHero	: Entity
+	deadplace	: List[Deadplace]
 	def __init__(self, size : Point):
 		self.size = size
 
@@ -12,6 +18,16 @@ class Map:
 	def setMainHero(self, e : Entity):
 		self.mainHero = e
 
+	def setDeadplace(self, d : list[Deadplace]):
+		self.deadplace = d
+
+	def isPointDead(self, p : Point):
+		if not self.isPointInMap(p):
+			return True
+		for x in self.deadplace:
+			if p in x:
+				return True
+		return False
 	def isPointInMap(self, p : Point):
 		if p.x < 0 or p.y < 0:
 			return False
