@@ -17,6 +17,9 @@ class Point:
 			self.x + other.x,
 			self.y + other.y
 		)
+	def __mul__(self, other):
+		if type(other) is int:
+			return Point(self.x * other, self.y * other)
 
 @dataclass
 class Pointf:
