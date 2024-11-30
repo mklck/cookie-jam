@@ -6,7 +6,6 @@ from PyQt6.QtCore import QTimer, QRect
 import sys
 
 class Scene(QGraphicsScene):
-
 	def __init__(self):
 		super().__init__()
 		self.tiles = list()
@@ -26,15 +25,36 @@ class Scene(QGraphicsScene):
 		self.removeItem(t.getGitem())
 		self.addItem(t)
 
+
+class View(QGraphicsView):
+	def __init__(self):
+		super().__init__()
+		self.map = dict()
+		self.assigned = None
+	def getAssigned(self) -> str:
+		return self.assigned
+	def assign(self, name : str):
+		self.setScene(self.map[name])
+	def add(self, name : str, scene : Scene):
+		self.map[name] = scene
+	def remove(self, name : str):
+		del self.meta[name]
+
+
 class Window(QWidget):
 	def __init__(self, size : Point):
 		self.app = QApplication(sys.argv)
 		super().__init__()
-		self.scene = Scene()
-		self.view = QGraphicsView(self.scene)
+		self.initView()
 		self.initWindow(size)
 		self.grabKeyboard()
 		self.timer = QTimer(self)
+
+	def initView(self):
+		view = View()
+		view.add('main', Scene())
+		view.assign('main')
+		self.view = view
 
 	def initWindow(self, size : Point):
 		self.window = QMainWindow()
@@ -43,14 +63,14 @@ class Window(QWidget):
 		self.window.resize(size.x, size.y)
 
 	def update(self):
-		self.scene.update()
+		self.view.scene().update()
 		self.callback()
 
 	def keyPressEvent(self, ev):
 		self.callback(ev)
 
 	def getScene(self):
-		return self.scene
+		return self.view.scene()
 
 	def show(self, callback):
 		self.callback = callback
