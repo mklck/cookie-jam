@@ -13,3 +13,18 @@ class Point:
 			self.x + other.x,
 			self.y + other.y
 		)
+
+@dataclass
+class Pointf:
+	x : float
+	y : float
+	def __add__(self, other):
+		return Pointf(
+			self.x + other.x,
+			self.y, + other.y
+		)
+	def __mul__(self, other):
+		return Pointf (
+			self.x * other.x,
+			self.y * other.y
+		)
