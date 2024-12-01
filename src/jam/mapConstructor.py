@@ -1,7 +1,7 @@
 import json5
 from typing	import List
 
-from .map	import Map
+from .map	import Map, Paper
 from .tile	import TilePixmap
 from .entity	import Entity
 from .textures	import textureManager
@@ -24,6 +24,7 @@ class MapConstructor:
 		pixmap = self.readBackground()
 		m.setBackground(pixmap)
 		m.setDeadplace(self.readDeadplace())
+		m.setPapers(self.readPaper())
 		return m
 
 	def readBackground(self) -> TilePixmap:
@@ -35,6 +36,7 @@ class MapConstructor:
 		pixmap.setPixmap(self.data['background'])
 		pixmap.setDesiredSize(desiredSize)
 		return pixmap
+
 	def readHero(self) -> Entity:
 		tsize = self.readTileSize()
 		e = Entity(textureManager)
@@ -43,6 +45,18 @@ class MapConstructor:
 		startPos = Point(*startPos)
 		e.setPos(startPos)
 		return e
+
+	def readPaper(self) -> List[Paper]:
+		tsize = self.readTileSize()
+		texturePath = self.data['paperTexture']
+		papers = []
+		for x in self.data['papers']:
+			p = Paper()
+			p.setDesiredSize(Point(tsize, tsize))
+			p.setPixmap(texturePath)
+			p.setPos(Point(*x))
+			papers.append(p)
+		return papers
 
 	def readTileSize(self) -> int:
 		return self.data['tileSize']
