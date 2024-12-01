@@ -55,6 +55,8 @@ class Game:
 	def initScene(self):
 		self.addTile(self.map.background)
 		self.addTile(self.map.mainHero)
+		for p in self.map.paper:
+			self.addTile(p)
 
 	def addTile(self, t : Tile):
 		self.view.scene().addItem(t)

@@ -4,11 +4,15 @@ from .entity		import Entity
 from dataclasses	import dataclass
 from typing		import List
 
+class Paper(TilePixmap):
+	pass
+
 @dataclass(init=False)
 class Map:
 	background	: TilePixmap
 	mainHero	: Entity
 	deadplace	: List[Deadplace]
+	paper		: List[Paper]
 	def __init__(self, size : Point):
 		self.size = size
 
@@ -20,6 +24,9 @@ class Map:
 
 	def setDeadplace(self, d : list[Deadplace]):
 		self.deadplace = d
+
+	def setPapers(self, p : list[Paper]):
+		self.paper = p
 
 	def isPointDead(self, p : Point):
 		if not self.isPointInMap(p):
