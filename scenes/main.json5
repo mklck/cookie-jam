@@ -25,5 +25,14 @@
 		[[0, 8], [1, 11]],
 		[[2, 8], [4, 8]],
 	],
-	startPos:	[3,3]
+
+	papers: [
+		[3, 11],
+		[10, 2],
+		[15, 5],
+		[19, 1],
+		[18, 9],
+	],
+	paperTexture:	"graphics/paper.png",
+	startPos:	[0, 6]
 }
