@@ -1,29 +1,36 @@
-from .model	import *
-from itertools	import product
+from .model		import Point, Deadplace
+from .tile		import TilePixmap
+from .entity		import Entity
+from dataclasses	import dataclass
+from typing		import List
 
+@dataclass(init=False)
 class Map:
-	def __init__(self, size : Point, default_colour="white"):
+	background	: TilePixmap
+	mainHero	: Entity
+	deadplace	: List[Deadplace]
+	def __init__(self, size : Point):
 		self.size = size
-		self.grid =[[Tile() for _ in range(size.x)] for _ in range(size.y)]
-		self.entities = []
-	def setTileColour(self, p : Point, colour):
-		t = self.getTile(p)
-		t.colour = colour
 
-	def addEntity(self, entity):
-		self.entities.append(entity)
+	def setBackground(self, bg : TilePixmap):
+		self.background = bg
+	
+	def setMainHero(self, e : Entity):
+		self.mainHero = e
 
-	def validPoint(self, p : Point):
-		cond0 = 0 <= p.x < self.size.x
-		cond1 = 0 <= p.y < self.size.y
-		return cond0 and cond1
+	def setDeadplace(self, d : list[Deadplace]):
+		self.deadplace = d
 
-	def getTile(self, p : Point):
-		if not self.validPoint(p):
-			raise IndexError(f"Invalid position {p}")
-		return self.grid[p.x][p.y]
-
-	def everyTilePoint(self):
-		for x, y in product(range(self.size.x), range(self.size.y)):
-			yield Point(x, y)
-
+	def isPointDead(self, p : Point):
+		if not self.isPointInMap(p):
+			return True
+		for x in self.deadplace:
+			if p in x:
+				return True
+		return False
+	def isPointInMap(self, p : Point):
+		if p.x < 0 or p.y < 0:
+			return False
+		if p.x >= self.size.x or p.y >= self.size.y:
+			return False
+		return True

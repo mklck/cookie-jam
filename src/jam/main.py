@@ -1,16 +1,19 @@
 from .mapPainter	import MapPainter
 from .model		import Point
-from .entity	import Entity
+from .entity		import Entity
+from .textures		import textureManager
+from .tile		import Tile, pixmapDB, TilePixmap
+from .mapConstructor	import MapConstructor
 
 def main():
-	size = Point(20, 20)
-	m = MapPainter(size)
-	for p in m.tileIterate():
-		if(p.x%2==p.y%2):
-			m.setTileColour(p, "#b123b7");
+	mc = MapConstructor()
+	mc.feedJSON("scenes/main.json5")
 
-	Roman = Entity(path="graphics/64x64_RomanV2.png")
-	Roman.setPos(Point(3,4))
+	size = mc.readMapSize()
+	tileSize = mc.readTileSize()
 
-	m.addEntity(Roman)
-	m.draw()
+	m = MapPainter(size, tileSize)
+
+	m.setMap(mc.getMap())
+
+	m.show()
