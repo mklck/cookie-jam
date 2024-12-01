@@ -11,6 +11,9 @@ class Scene(QGraphicsScene):
 		qg = t.update()
 		super().addItem(qg)
 
+	def addQtItem(self, q):
+		super().addItem(q)
+
 	def updateAll(self):
 		for t in self.tiles:
 			if not t.needUpdate():
