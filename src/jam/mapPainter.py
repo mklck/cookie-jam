@@ -1,7 +1,7 @@
 from .map		import Map
 from .model		import Point
 from .tile		import Tile
-from .gui		import Window, KbdEvent
+from .gui		import MainWindowConstructor, KbdEvent
 from .controller	import Controller
 from .scene		import Scene
 
@@ -12,9 +12,14 @@ class MapPainter:
 			tileSize * size.x,
 			tileSize * size.y
 		)
+
+		mwc = MainWindowConstructor(winSize)
+		mwc.makeGame(self.update)
+		mwc.makeVideo("graphics/RomanIJola_overlay_compressed.mp4")
+		self.mainWindow = mwc.make()
+		self.view = mwc.getGameView()
+
 		self.controller = Controller()
-		self.win = Window(winSize)
-		self.view = self.win.view
 
 	def setMap(self, m : Map):
 		self.map = m
@@ -22,7 +27,8 @@ class MapPainter:
 
 	def show(self):
 		self.initScene()
-		self.win.show(self.update)
+		self.mainWindow.getCurrentWindow().play()
+		self.mainWindow.show()
 
 	def update(self, obj = None):
 		if type(obj) is KbdEvent:

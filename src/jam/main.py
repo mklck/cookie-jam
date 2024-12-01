@@ -12,6 +12,7 @@ def main():
 	size = mc.readMapSize()
 	tileSize = mc.readTileSize()
 
+	path = "graphics/RomanIJola_overlay_compressed.mp4"
 	m = MapPainter(size, tileSize)
 
 	m.setMap(mc.getMap())

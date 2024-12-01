@@ -1,4 +1,5 @@
 from .model		import *
+from .timer		import Timer
 from dataclasses	import dataclass
 
 from PyQt6.QtWidgets	import QGraphicsItem, QGraphicsPixmapItem, QGraphicsRectItem
@@ -116,4 +117,3 @@ class TileRect(Tile):
 		self.gitem.setBrush(qc)
 		self.gitem.setPen(QColor('black'))
 		return super().update()
-
