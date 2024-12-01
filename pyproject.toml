@@ -6,7 +6,7 @@ build-backend = "setuptools.build_meta"
 requires-python = ">=3.12"
 version = "0.1.0"
 name = "jam"
-dependencies = ["pyqt6"]
+dependencies = ["pyqt6", "json5"]
 
 [project.scripts]
 jam = "jam:main"

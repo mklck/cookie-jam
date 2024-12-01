@@ -1,41 +1,38 @@
-from .map	import Map
-from .model	import Point
+from .map		import Map
+from .model		import Point
+from .tile		import Tile
+from .gui		import Window, KbdEvent
+from .controller	import Controller
+from .scene		import Scene
 
-from PyQt6.QtWidgets import QApplication, QMainWindow, QGraphicsScene, QGraphicsView, QGraphicsRectItem
-from PyQt6.QtGui import QColor
-from PyQt6.QtCore import QRectF
-import sys
-
-class MapPainter(Map):
-	TILE_SIZE = 20
-	def __init__(self, size : Point):
-		super().__init__(size)
-		self.app = QApplication(sys.argv)
-
-		self.window = QMainWindow()
-		self.window.setWindowTitle("Map Drawer")
-
-		self.scene = QGraphicsScene()
-
-	def draw(self):
-		for p in self.everyTilePoint():
-			self.drawRect(p)
-		view = QGraphicsView(self.scene)
-		self.window.setCentralWidget(view)
-		self.window.resize(
-			self.size.x * self.TILE_SIZE + 20,
-			self.size.y * self.TILE_SIZE + 40
+class MapPainter:
+	def __init__(self, size : Point, tileSize : int):
+		Tile.setTileSize(tileSize)
+		winSize = Point(
+			tileSize * size.x,
+			tileSize * size.y
 		)
+		self.controller = Controller()
+		self.win = Window(winSize)
+		self.view = self.win.view
 
-		self.window.show()
-		sys.exit(self.app.exec())
+	def setMap(self, m : Map):
+		self.map = m
+		self.controller.setMap(m)
 
-	def drawRect(self, p : Point):
-		colour = self.getTile(p).colour
-		rect = QGraphicsRectItem(
-			p.x * self.TILE_SIZE, p.y * self.TILE_SIZE,
-			self.TILE_SIZE, self.TILE_SIZE
-		)
-		rect.setBrush(QColor(colour))
-		rect.setPen(QColor("black"))  # Opcjonalnie dodajemy obramowanie
-		self.scene.addItem(rect)
+	def show(self):
+		self.initScene()
+		self.win.show(self.update)
+
+	def update(self, obj = None):
+		if type(obj) is KbdEvent:
+			self.controller.keyEvent(obj)
+		self.controller.step()
+		self.view.updateScene()
+
+	def initScene(self):
+		self.addTile(self.map.background)
+		self.addTile(self.map.mainHero)
+
+	def addTile(self, t : Tile):
+		self.view.scene().addItem(t)
