@@ -1,5 +1,5 @@
 from .scene	import Scene
-from .model	import Point
+from .model	import Point, KbdEvent, Callback, CallbackData
 
 from PyQt6.QtWidgets import QStackedWidget, QApplication, QMainWindow, QGraphicsView, QWidget, QVBoxLayout
 from PyQt6.QtGui import QKeyEvent
@@ -10,9 +10,6 @@ from PyQt6.QtMultimediaWidgets import QVideoWidget
 from PyQt6.QtCore import QUrl
 
 import sys
-
-class KbdEvent(str):
-	pass
 
 class View(QGraphicsView):
 	def __init__(self):
@@ -30,48 +27,53 @@ class View(QGraphicsView):
 	def updateScene(self):
 		self.scene().updateAll()
 
-
-class VideoWindow(QWidget):
-	def __init__(self):
+class Window(QWidget):
+	def __init__(self, widget):
 		super().__init__()
 		self.layout = QVBoxLayout()
-		self.video = QVideoWidget()
-		self.layout.addWidget(self.video)
+		self.layout.addWidget(widget)
 		self.setLayout(self.layout)
+
+class VideoWindow(Window):
+	def __init__(self):
+		self.video = QVideoWidget()
+		self.started = False
+		super().__init__(self.video)
 
 	def loadVideo(self, path):
 		self.media = QMediaPlayer()
 		self.media.setSource(QUrl.fromLocalFile(path))
 		self.media.setVideoOutput(self.video)
+		self.media.mediaStatusChanged.connect(self.updateMediaStatus)
+
+	def notYetStarted(self):
+		return not self.started 
+
+	def updateMediaStatus(self, status):
+		self.mediaStatus = status
+
+	def endOfMedia(self):
+		return self.mediaStatus == QMediaPlayer.MediaStatus.EndOfMedia
 
 	def play(self):
+		self.started = True
 		self.media.play()
 
 	def stop(self):
 		self.media.stop()
 
-	def update(self, ev = None):
-		pass
-
-class GameWindow(QWidget):
+class GameWindow(Window):
 	def __init__(self):
-		super().__init__()
 		self.initView()
-		self.layout = QVBoxLayout()
-		self.layout.addWidget(self.view)
-		self.setLayout(self.layout)
+		super().__init__(self.view)
 
 	def initView(self):
 		self.view = View()
 		self.view.add('main', Scene())
 		self.view.assign('main')
 
-	def setCallback(self, cb):
-		self.callback = cb
-
-	def update(self, ev = None):
-		self.view.scene().update()
-		self.callback(ev)
+	def update(self):
+		self.view.updateScene()
 
 class MainWindow(QMainWindow):
 	def __init__(self, size : Point):
@@ -91,6 +93,9 @@ class MainWindow(QMainWindow):
 		self.windows = []
 		self.timer = QTimer(self)
 
+	def setCallback(self, cb : Callback):
+		self.callback = cb
+
 	def setQApp(self, qapp):
 		self.app = qapp
 	
@@ -107,10 +112,19 @@ class MainWindow(QMainWindow):
 	def keyPressEvent(self, ev):
 		if type(ev) is QKeyEvent:
 			ev = KbdEvent(ev.text())
-		self.getCurrentWindow().update(ev)
+
+		cd = CallbackData(
+			event=ev,
+			window=self.getCurrentWindow()
+		)
+		self.callback(cd)
 
 	def update(self):
-		self.getCurrentWindow().update()
+		cd = CallbackData(
+			event=None,
+			window=self.getCurrentWindow()
+		)
+		self.callback(cd)
 
 	def show(self):
 		self.timer.timeout.connect(self.update)
@@ -125,9 +139,11 @@ class MainWindowConstructor:
 		self.main = MainWindow(size)
 		self.main.setQApp(self.app)
 
-	def makeGame(self, cb):
+	def setCallback(self, cb : Callback):
+		self.main.setCallback(cb)
+
+	def makeGame(self):
 		self.game = GameWindow()
-		self.game.setCallback(cb)
 		self.main.addWindow(self.game)
 
 	def makeVideo(self, path):

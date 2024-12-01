@@ -1,11 +1,10 @@
 from .map		import Map
-from .model		import Point
+from .model		import Point, KbdEvent, Callback, CallbackData
 from .tile		import Tile
-from .gui		import MainWindowConstructor, KbdEvent
+from .gui		import MainWindowConstructor, VideoWindow, GameWindow
 from .controller	import Controller
-from .scene		import Scene
 
-class MapPainter:
+class Game:
 	def __init__(self, size : Point, tileSize : int):
 		Tile.setTileSize(tileSize)
 		winSize = Point(
@@ -14,8 +13,12 @@ class MapPainter:
 		)
 
 		mwc = MainWindowConstructor(winSize)
-		mwc.makeGame(self.update)
+		mwc.setCallback(self.update)
+		mwc.makeGame()
 		mwc.makeVideo("graphics/RomanIJola_overlay_compressed.mp4")
+
+		self.mwc = mwc
+		
 		self.mainWindow = mwc.make()
 		self.view = mwc.getGameView()
 
@@ -27,14 +30,27 @@ class MapPainter:
 
 	def show(self):
 		self.initScene()
-		self.mainWindow.getCurrentWindow().play()
 		self.mainWindow.show()
 
-	def update(self, obj = None):
-		if type(obj) is KbdEvent:
-			self.controller.keyEvent(obj)
-		self.controller.step()
-		self.view.updateScene()
+	def update(self, d : CallbackData):
+		tp = type(d.window)
+		if tp is VideoWindow:
+			self.updateVideo(d)
+		elif tp is GameWindow:
+			d.window.update()
+			if type(d.event) is KbdEvent:
+				self.controller.keyEvent(d.event)
+			self.controller.step()
+
+	def updateVideo(self, d : CallbackData):
+		win, ev = d.window, d.event
+
+		if win.notYetStarted():
+			win.play()
+
+		if type(ev) is KbdEvent or win.endOfMedia():
+			win.stop()
+			self.mainWindow.switchWindow(self.mwc.game)
 
 	def initScene(self):
 		self.addTile(self.map.background)

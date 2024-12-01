@@ -1,4 +1,4 @@
-from .mapPainter	import MapPainter
+from .game		import Game
 from .model		import Point
 from .entity		import Entity
 from .textures		import textureManager
@@ -13,8 +13,9 @@ def main():
 	tileSize = mc.readTileSize()
 
 	path = "graphics/RomanIJola_overlay_compressed.mp4"
-	m = MapPainter(size, tileSize)
+	
+	g = Game(size, tileSize)
 
-	m.setMap(mc.getMap())
+	g.setMap(mc.getMap())
 
-	m.show()
+	g.show()
