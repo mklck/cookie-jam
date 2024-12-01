@@ -1,6 +1,6 @@
 from dataclasses	import dataclass
 from itertools		import product
-from typing		import Literal, Union
+from typing		import Literal, Union, Optional, Callable
 
 Direction = Literal['north', 'south', 'east', 'west']
 HeroState = Literal['normal', 'walk', 'fight']
@@ -66,3 +66,15 @@ class Deadplace:
 		cond0 = self.start.x <= p.x <= self.end.x
 		cond1 = self.start.y <= p.y <= self.end.y
 		return cond0 and cond1
+
+class KbdEvent(str):
+	pass
+
+@dataclass
+class CallbackData:
+	event	: Optional[KbdEvent]
+	window	: 'Window'
+
+Callback = Callable[[CallbackData], None]
+
+
