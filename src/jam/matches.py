@@ -11,7 +11,7 @@ class MatchstickGame(QMainWindow):
 	app = QApplication(sys.argv)
 	window = MatchstickGame("5+7=2",1)
 	window.show()
-	sys.exit(app.exec())
+	app.exec()
 
 	przykładowe argumenty:
 	("6+3=9",1)

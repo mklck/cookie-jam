@@ -10,7 +10,7 @@ dependencies = ["pyqt6", "json5"]
 
 [project.scripts]
 jam = "jam:main"
-
+jammenu ="jam:menu"
 [project.optional-dependencies]
 dev = ["pytest", "mypy"]
 
