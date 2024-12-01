@@ -9,14 +9,23 @@ class MatchstickGame(QMainWindow):
 	"""
 	przykładowe wywołanie zapałek:
 	app = QApplication(sys.argv)
-	window = MatchstickGame("5+7=2",1) lub window = MatchstickGame("4X9=46",2)
+	window = MatchstickGame("5+7=2",1)
 	window.show()
 	sys.exit(app.exec())
+
+	przykładowe argumenty:
+	("6+3=9",1)
+	("5+7=2",1)
+	("4-9=7",1)
+	("0-9=5",1)
+	("4X9=46",2)
+
 	"""
 	def __init__(self, equation, quantity):
 		super().__init__()
 		self.setWindowTitle("Matchstick Equation")
 		self.setGeometry(100, 100, 800, 400)
+		self.setStyleSheet("background-color: #1E1E1E;")
 		# Inicjalizacja widoku i sceny
 		self.scene = QGraphicsScene()
 		self.view = QGraphicsView(self.scene, self)
@@ -130,6 +139,7 @@ class MatchstickGame(QMainWindow):
 		elif operator == '-':
 			segments = {
 				'h': [(x_offset + 10, y_offset + 25), (x_offset + 50, y_offset + 25)],
+				'v': [(x_offset + 30, y_offset), (x_offset + 30, y_offset + 50)],
 			}
 		elif operator == 'X':
 			segments = {
@@ -152,6 +162,8 @@ class MatchstickGame(QMainWindow):
 			segment_key = (segment, owner)
 
 			line.setPen(QPen(QColor(203, 167, 92), 5))  # Kolor zapałki
+			if operator=='-' and segment=='v':
+				line.setPen(QPen(QColor(0, 0, 0), 5))
 			self.matches[segment_key] = line
 			self.scene.addItem(line)
 
@@ -183,11 +195,7 @@ class MatchstickGame(QMainWindow):
 					self.quantity=self.quantity-1
 					if self.quantity==0:
 						if self.check_logic(self.check_eqaution()):
-							# for item in self.matches.items():
-							# 	item.setPen(QPen(QColor(23, 240, 23), 5))
-							print("Gratulacje")
-							QTimer.singleShot(1000)
-							self.close()
+							self.win()
 						else:
 							print("Równanie źle ułożone!")
 							self.reset_button.click()
@@ -341,3 +349,7 @@ class MatchstickGame(QMainWindow):
 			return True
 		else:
 			return False
+	def win(self):
+		print("Gratulacje, rozwiązałeś równanie!")
+		self.close()
+		return True
