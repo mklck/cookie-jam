@@ -4,6 +4,10 @@ from .animator	import Animator, Movements
 class Controller:
 	def __init__(self):
 		self.animator = Animator()
+		self.clearPaper()
+
+	def clearPaper(self):
+		self.steppedPaper = None
 
 	def setMap(self, m):
 		self.map = m
@@ -21,9 +25,16 @@ class Controller:
 		if not self.canMove(direction):
 			return
 		self.animator.animate(self.map.mainHero, direction)
+
 	def canMove(self, direction):
 		newPos = Movements[direction] + self.map.mainHero.pos
 		return not self.map.isPointDead(newPos)
+
 	def step(self):
 		print(f'pos = {self.map.mainHero.pos}', end='\r')
 		self.animator.step()
+		for p in self.map.paper:
+			if p.pos == self.map.mainHero.pos:
+				self.steppedPaper = p
+				self.map.paper.remove(p)
+				break
