@@ -1,5 +1,6 @@
 from .scene	import Scene
 from .model	import Point, KbdEvent, Callback, CallbackData
+from .matches 	import MenuWindow, MatchstickGame
 
 from PyQt6.QtWidgets import QStackedWidget, QApplication, QMainWindow, QGraphicsView, QWidget, QVBoxLayout
 from PyQt6.QtGui import QKeyEvent
@@ -84,6 +85,8 @@ class MainWindow(QMainWindow):
 		self.layout = QVBoxLayout()
 		self.layout.addWidget(self.stack)
 
+		self.setStyleSheet("background-color: #1E1E1E;")
+
 		self.container = QWidget()
 		self.container.setLayout(self.layout)
 		self.setCentralWidget(self.container)
@@ -132,6 +135,15 @@ class MainWindow(QMainWindow):
 		super().show()
 		sys.exit(self.app.exec())
 
+	def playVideo(self, path):
+		for x in self.windows:
+			if type(x) is VideoWindow:
+				del x
+		v = VideoWindow()
+		v.loadVideo(path)
+		self.addWindow(v)
+		self.switchWindow(v)
+
 class MainWindowConstructor:
 	def __init__(self, size : Point):
 		self.app = QApplication(sys.argv)
@@ -151,7 +163,13 @@ class MainWindowConstructor:
 		self.video.loadVideo(path)
 		self.main.addWindow(self.video)
 
+	def makeMatchstick(self, riddle):
+		self.match = MatchstickGame(*riddle)
+		self.main.addWindow(self.match)
+
 	def make(self):
+		self.menu = MenuWindow()
+		self.main.addWindow(self.menu)
 		self.main.switchWindow(self.video)
 		return self.main
 
